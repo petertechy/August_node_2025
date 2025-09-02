@@ -1,0 +1,22 @@
+{
+  "name": "first-node",
+  "version": "1.0.0",
+  "description": "This is my first node app",
+  "main": "index.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "keywords": [
+    "first",
+    "node",
+    "backend"
+  ],
+  "author": "Olanrewaju",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "mongodb": "^6.19.0",
+    "mongoose": "^8.18.0"
+  }
+}
