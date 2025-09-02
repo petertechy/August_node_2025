@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="mx-auto col-7 shadow p-3 my-4 border-2">
+      <h1>Edit User</h1>
+      <form action="/update-user/<%= user.id %>" method="POST">
+        <input class="form-control mb-3" type="text" placeholder="first name" name="firstname" value="<%= user.firstname %>" required />
+        <input class="form-control mb-3" type="text" placeholder="last name" name="lastname" value="<%= user.lastname %>" required />
+        <input class="form-control mb-3" type="text" placeholder="email" name="email" value="<%= user.email %>" required />
+        <button type="submit" class="btn btn-success w-100">Update</button>
+      </form>
+    </div>
+</body>
+</html>
