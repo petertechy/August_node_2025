@@ -32,8 +32,8 @@ const registerUser = (req, res) => {
     .save()
     .then(() => {
       console.log("User Saved Successfully");
-      // res.status(201).send({status: true, message: "User registered successfully", form})
-      res.redirect("/dashboard");
+      res.status(201).send({status: true, message: "User registered successfully", form})
+      // res.redirect("/dashboard");
     })
     .catch((err) => {
       console.log("There is an error");
