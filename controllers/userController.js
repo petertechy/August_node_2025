@@ -32,7 +32,9 @@ const registerUser = (req, res) => {
     .save()
     .then(() => {
       console.log("User Saved Successfully");
-      res.status(201).send({status: true, message: "User registered successfully", form})
+      res
+        .status(201)
+        .send({ status: true, message: "User registered successfully", form });
       // res.redirect("/dashboard");
     })
     .catch((err) => {
@@ -40,6 +42,32 @@ const registerUser = (req, res) => {
       res
         .status(500)
         .send({ status: false, message: "Unable to register user" });
+      console.log(err);
+    });
+};
+
+const authUser = (req, res) => {
+  // console.log(req.body)
+  let { password } = req.body
+  userModel
+    .findOne({ email: req.body.email })
+    .then((user) => {
+      if (user) {
+        // res.send({ message: "Right credential", status: true });
+        user.validatePassword(password, (err,same) => {
+          if(!same){
+            res.status(404).send({status: false, message: "Wrong Credential"})
+          }
+          else{
+            res.status(200).send({status: true, message: "Right Credential"})
+
+          }
+        });
+      } else {
+        res.status(404).send({ message: "Wrong credential", status: false });
+      }
+    })
+    .catch((err) => {
       console.log(err);
     });
 };
@@ -82,4 +110,14 @@ const updateUser = (req, res) => {
     });
 };
 
-module.exports = {registerUser,editUser,updateUser,deleteUser,userDashboard,aboutPage,signUp,landingPage}
+module.exports = {
+  registerUser,
+  editUser,
+  updateUser,
+  deleteUser,
+  userDashboard,
+  aboutPage,
+  signUp,
+  landingPage,
+  authUser,
+};
