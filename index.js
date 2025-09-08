@@ -1,17 +1,19 @@
 const express = require('express')
 const app = express()
-const PORT = 5000
+const PORT = process.env.PORT || 5000
 const ejs = require("ejs")
 const mongoose = require("mongoose")
 const cors = require("cors")
+const dotenv = require("dotenv")
 const userRoute = require("./routes/user.route")
 app.use(cors())
 app.set("view engine", "ejs")
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 app.use("/",userRoute)
+dotenv.config()
 
-const URI = "mongodb+srv://petertechy01:Olanrewaju@my-project.w3cyijl.mongodb.net/school_portal?retryWrites=true&w=majority&appName=my-project"
+const URI = process.env.MONGODB_URI
 
 mongoose.connect(URI)
 .then(()=>{
