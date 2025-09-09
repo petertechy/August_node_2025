@@ -1,5 +1,5 @@
 const express = require("express")
-const { landingPage, signUp, aboutPage, registerUser, deleteUser, editUser, updateUser, userDashboard, authUser } = require("../controllers/userController")
+const { landingPage, signUp, aboutPage, registerUser, deleteUser, editUser, updateUser, userDashboard, authUser, getDashboard } = require("../controllers/userController")
 
 const router = express.Router()
 
@@ -10,7 +10,8 @@ router.post("/register", registerUser)
 router.post("/delete/:id", deleteUser)
 router.post("/edit-user/:id", editUser)
 router.post("/update-user/:id", updateUser)
-router.get("/dashboard", userDashboard)
+router.get("/user-dashboard", userDashboard)
 router.post("/signin", authUser)
+router.get("/dashboard", getDashboard)
 
 module.exports = router
