@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel");
+const jwt = require("jsonwebtoken")
 
 const landingPage = (req, res) => {
   // console.log("Welcome to my Landing page")
@@ -56,21 +57,36 @@ const authUser = (req, res) => {
         // res.send({ message: "Right credential", status: true });
         user.validatePassword(password, (err,same) => {
           if(!same){
-            res.status(404).send({status: false, message: "Wrong Credential"})
+            res.send({status: false, message: "Wrong Credential"})
           }
           else{
-            res.status(200).send({status: true, message: "Right Credential"})
-
+            let token = jwt.sign({email: req.body.email}, "secret", {expiresIn:60*60})
+            // console.log(token)
+            res.status(200).send({status: true, message: "Right Credential", token})
           }
         });
       } else {
-        res.status(404).send({ message: "Wrong credential", status: false });
+        res.send({ message: "Wrong credential", status: false });
       }
     })
     .catch((err) => {
       console.log(err);
     });
 };
+
+const getDashboard = (req, res) =>{
+  let token = req.headers.authorization.split(" ")[1]
+  console.log(token)
+  jwt.verify(token, "secret", (err, result)=>{
+    if(err){
+      console.log(err)
+      res.send({status: false, message: "Expired Token or Invalid token"})
+    }else{
+      console.log(result)
+      res.send({status: true, message: "Valid Token"})
+    }
+  })
+}
 
 const deleteUser = (req, res) => {
   userModel
@@ -120,4 +136,5 @@ module.exports = {
   signUp,
   landingPage,
   authUser,
+  getDashboard
 };
