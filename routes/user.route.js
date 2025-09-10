@@ -1,5 +1,5 @@
 const express = require("express")
-const { landingPage, signUp, aboutPage, registerUser, deleteUser, editUser, updateUser, userDashboard, authUser, getDashboard } = require("../controllers/userController")
+const { landingPage, signUp, aboutPage, registerUser, deleteUser, editUser, updateUser, userDashboard, authUser, getDashboard, uploadFile } = require("../controllers/userController")
 
 const router = express.Router()
 
@@ -13,5 +13,6 @@ router.post("/update-user/:id", updateUser)
 router.get("/user-dashboard", userDashboard)
 router.post("/signin", authUser)
 router.get("/dashboard", getDashboard)
+router.post("/upload", uploadFile)
 
 module.exports = router
