@@ -1,5 +1,12 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken")
+const cloudinary = require("cloudinary")
+
+cloudinary.config({
+  cloud_name: "dcntfpntm",
+  api_key: "963429939113368",
+  api_secret: "-Vp9g6gGPNox2OJ7EzMPCAAxZqU"
+})
 
 const landingPage = (req, res) => {
   // console.log("Welcome to my Landing page")
@@ -126,6 +133,20 @@ const updateUser = (req, res) => {
     });
 };
 
+const uploadFile = (req,res)=>{
+  let file = req.body.myfile
+  cloudinary.v2.uploader.upload(file,(err, result)=>{
+    if(err){
+      console.log("File could not be uploaded")
+      res.send({message: "Image not uploaded", status: false})
+    }else{
+      console.log(result)
+      let imageLink = result.secure_url
+      res.send({message: "Image Uploaded", status: true, imageLink})
+    }
+  })
+}
+
 module.exports = {
   registerUser,
   editUser,
@@ -136,5 +157,6 @@ module.exports = {
   signUp,
   landingPage,
   authUser,
-  getDashboard
+  getDashboard,
+  uploadFile
 };
