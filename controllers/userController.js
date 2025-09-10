@@ -1,12 +1,12 @@
 const userModel = require("../models/userModel");
-const jwt = require("jsonwebtoken")
-const cloudinary = require("cloudinary")
+const jwt = require("jsonwebtoken");
+const cloudinary = require("cloudinary");
 
 cloudinary.config({
   cloud_name: "dcntfpntm",
   api_key: "963429939113368",
-  api_secret: "-Vp9g6gGPNox2OJ7EzMPCAAxZqU"
-})
+  api_secret: "-Vp9g6gGPNox2OJ7EzMPCAAxZqU",
+});
 
 const landingPage = (req, res) => {
   // console.log("Welcome to my Landing page")
@@ -56,20 +56,21 @@ const registerUser = (req, res) => {
 
 const authUser = (req, res) => {
   // console.log(req.body)
-  let { password } = req.body
+  let { password } = req.body;
   userModel
     .findOne({ email: req.body.email })
     .then((user) => {
       if (user) {
         // res.send({ message: "Right credential", status: true });
-        user.validatePassword(password, (err,same) => {
-          if(!same){
-            res.send({status: false, message: "Wrong Credential"})
-          }
-          else{
-            let token = jwt.sign({email: req.body.email}, "secret", {expiresIn:60*60})
+        user.validatePassword(password, (err, same) => {
+          if (!same) {
+            res.send({ status: false, message: "Wrong Credential" });
+          } else {
+            let token = jwt.sign({ id: user._id }, "secret", { expiresIn: "1h" });
             // console.log(token)
-            res.status(200).send({status: true, message: "Right Credential", token})
+            res
+              .status(200)
+              .send({ status: true, message: "Right Credential", token });
           }
         });
       } else {
@@ -81,19 +82,37 @@ const authUser = (req, res) => {
     });
 };
 
-const getDashboard = (req, res) =>{
-  let token = req.headers.authorization.split(" ")[1]
-  console.log(token)
-  jwt.verify(token, "secret", (err, result)=>{
-    if(err){
-      console.log(err)
-      res.send({status: false, message: "Expired Token or Invalid token"})
-    }else{
-      console.log(result)
-      res.send({status: true, message: "Valid Token"})
+const getDashboard = (req, res) => {
+  let token = req.headers.authorization.split(" ")[1];
+
+  jwt.verify(token, "secret", async (err, decoded) => {
+    if (err) {
+      console.log(err);
+      return res.send({ status: false, message: "Expired Token or Invalid token" });
     }
-  })
-}
+
+    try {
+      // Find the user by ID from token
+      const user = await userModel.findById(decoded.id).select(
+        "firstname lastname email register_date"
+      );
+
+      if (!user) {
+        return res.send({ status: false, message: "User not found" });
+      }
+
+      res.send({
+        status: true,
+        message: "Valid Token",
+        user,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ status: false, message: "Server Error" });
+    }
+  });
+};
+
 
 const deleteUser = (req, res) => {
   userModel
@@ -133,19 +152,19 @@ const updateUser = (req, res) => {
     });
 };
 
-const uploadFile = (req,res)=>{
-  let file = req.body.myfile
-  cloudinary.v2.uploader.upload(file,(err, result)=>{
-    if(err){
-      console.log("File could not be uploaded")
-      res.send({message: "Image not uploaded", status: false})
-    }else{
-      console.log(result)
-      let imageLink = result.secure_url
-      res.send({message: "Image Uploaded", status: true, imageLink})
+const uploadFile = (req, res) => {
+  let file = req.body.myfile;
+  cloudinary.v2.uploader.upload(file, (err, result) => {
+    if (err) {
+      console.log("File could not be uploaded");
+      res.send({ message: "Image not uploaded", status: false });
+    } else {
+      console.log(result);
+      let imageLink = result.secure_url;
+      res.send({ message: "Image Uploaded", status: true, imageLink });
     }
-  })
-}
+  });
+};
 
 module.exports = {
   registerUser,
@@ -158,5 +177,5 @@ module.exports = {
   landingPage,
   authUser,
   getDashboard,
-  uploadFile
+  uploadFile,
 };
