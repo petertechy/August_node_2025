@@ -6,11 +6,13 @@ const mongoose = require("mongoose")
 const cors = require("cors")
 const dotenv = require("dotenv")
 const userRoute = require("./routes/user.route")
+const adminRoute = require("./routes/admin.route")
 app.use(cors())
 app.set("view engine", "ejs")
 app.use(express.urlencoded({extended: true, limit: "50mb"}))
 app.use(express.json({limit: "50mb"}))
 app.use("/",userRoute)
+app.use("/admin", adminRoute)
 dotenv.config()
 
 const URI = process.env.MONGODB_URI
