@@ -3,9 +3,9 @@ const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary");
 
 cloudinary.config({
-  cloud_name: "dcntfpntm",
-  api_key: "963429939113368",
-  api_secret: "-Vp9g6gGPNox2OJ7EzMPCAAxZqU",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const landingPage = (req, res) => {
