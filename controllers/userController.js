@@ -1,6 +1,8 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary");
+const nodemailer = require("nodemailer");
+const registrationEmail = require("../emails/registrationEmail");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -40,6 +42,28 @@ const registerUser = (req, res) => {
     .save()
     .then(() => {
       console.log("User Saved Successfully");
+      let transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.USER,
+          pass: process.env.PASS,
+        },
+      });
+
+      let mailOptions = {
+        from: '"Student Portal" <petertechy01@gmail.com>',
+        to: [req.body.email],
+        subject: "🎉 Welcome to Student Portal – Registration Successful!",
+        html: registrationEmail(req.body.firstname, req.body.lastname),
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
       res
         .status(201)
         .send({ status: true, message: "User registered successfully", form });
@@ -66,7 +90,9 @@ const authUser = (req, res) => {
           if (!same) {
             res.send({ status: false, message: "Wrong Credential" });
           } else {
-            let token = jwt.sign({ id: user._id }, "secret", { expiresIn: "1h" });
+            let token = jwt.sign({ id: user._id }, "secret", {
+              expiresIn: "1h",
+            });
             // console.log(token)
             res
               .status(200)
@@ -88,14 +114,17 @@ const getDashboard = (req, res) => {
   jwt.verify(token, "secret", async (err, decoded) => {
     if (err) {
       console.log(err);
-      return res.send({ status: false, message: "Expired Token or Invalid token" });
+      return res.send({
+        status: false,
+        message: "Expired Token or Invalid token",
+      });
     }
 
     try {
       // Find the user by ID from token
-      const user = await userModel.findById(decoded.id).select(
-        "firstname lastname email register_date"
-      );
+      const user = await userModel
+        .findById(decoded.id)
+        .select("firstname lastname email register_date");
 
       if (!user) {
         return res.send({ status: false, message: "User not found" });
@@ -112,7 +141,6 @@ const getDashboard = (req, res) => {
     }
   });
 };
-
 
 const deleteUser = (req, res) => {
   userModel
