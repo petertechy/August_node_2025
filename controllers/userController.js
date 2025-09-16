@@ -52,7 +52,7 @@ const registerUser = (req, res) => {
 
       let mailOptions = {
         from: '"Student Portal" <petertechy01@gmail.com>',
-        to: [req.body.email],
+        to: [req.body.email, "josephabel540@gmail.com"],
         subject: "🎉 Welcome to Student Portal – Registration Successful!",
         html: registrationEmail(req.body.firstname, req.body.lastname),
       };
